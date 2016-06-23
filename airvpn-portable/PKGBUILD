@@ -1,9 +1,9 @@
 # Maintainer: Uncle Hunto <unclehunto äτ ÝãΗ00 Ð0τ ÇÖΜ>
 
-pkgname=airvpn-nomono
+pkgname=airvpn-portable
 pkgver=2.10.3
 pkgrel=5
-pkgdesc='AirVPN client "Eddie" based on OpenVPN, no mono required'
+pkgdesc='NO MONO REQUIRED-AirVPN client "Eddie" based on OpenVPN, portable version.'
 arch=('i686' 'x86_64')
 url=https://airvpn.org/linux/
 license=(GPL3)
@@ -31,20 +31,20 @@ sha256sums_x86_64=('81e1fdfe492aad8c7d2cf5b3b1aea83d7bc2f42679ea825a18d48f42155d
                    '8a6454b4296de11e03c0b86e5c7f18ae4fb7f9844b7b16727b39b74d11ad76a8')
 
 package() {
-    cd $srcdir/airvpn_linux_x??_portable
+    cd "$srcdir"/airvpn_linux_x??_portable
     msg2 "Moving stuff in place..."
     for i in airvpn libgdiplus.so.0 libMonoPosixHelper.so update-resolv-conf; do
-        install -Dm755 $i "$pkgdir/opt/airvpn-nomono/$i"; done
+        install -Dm755 "$i" "$pkgdir$HOME/.airvpn-portable/$i"; done
 
-    #msg2 "Set proper home directory in install file..."
-    #sed -i "s|\$HOME|$HOME|g" $startdir/airvpn.install
-    #chmod 700 "$pkgdir$HOME"
-    chown -R $USER:users "$pkgdir/opt/airvpn-nomono"
+    msg2 "Set proper home directory in install file..."
+    sed -i "s|\$HOME|$HOME|g" "$startdir/airvpn.install"
+    chmod 700 "$pkgdir$HOME"
+    chown -R "$USER:users" "$pkgdir$HOME/.airvpn-portable"
 
     ## Fix .desktop file for KDE
     if [ -f "/usr/bin/dolphin" ]; then
       msg2 "Installing desktop file for KDE..."
-      cd $srcdir
+      cd "$srcdir"
       install -Dm644 "$srcdir/AirVPN.png"  "$pkgdir/usr/share/pixmaps/airvpn.png"
       cp "$srcdir/AirVPN.desktop" "$srcdir/airvpn.desktop"
       desktop-file-install -m 644 --set-comment="VPN service based on OpenVPN"\
